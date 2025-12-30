@@ -1,0 +1,84 @@
+<div class="container mx-auto p-4 max-w-7xl">
+  <p-toast></p-toast>
+
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold mb-2">Moja naročila</h2>
+    <p class="text-gray-600">Pregled vseh vaših naročil</p>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  }
+
+  @if (!loading() && orders().length > 0) {
+    <p-card>
+      <p-table
+        [value]="orders()"
+        [paginator]="true"
+        [rows]="10"
+        [responsiveLayout]="'scroll'"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>ID naročila</th>
+            <th>Datum</th>
+            <th>Status</th>
+            <th class="text-right">Skupaj</th>
+            <th class="text-center">Št. izdelkov</th>
+            <th style="width: 10rem"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-order>
+          <tr>
+            <td>
+              <span class="font-mono font-semibold">#{{ order.id }}</span>
+            </td>
+            <td>
+              {{ order.createdAt | date: 'dd.MM.yyyy HH:mm' }}
+            </td>
+            <td>
+              <p-tag
+                [value]="getStatusLabel(order.status)"
+                [severity]="getStatusSeverity(order.status)"
+              ></p-tag>
+            </td>
+            <td class="text-right">
+              <span class="font-bold">
+                {{ order.totalPrice | number: '1.2-2' }} €
+              </span>
+            </td>
+            <td class="text-center">
+              {{ order.items?.length || 0 }}
+            </td>
+            <td class="text-center">
+              <p-button
+                icon="pi pi-eye"
+                label="Podrobnosti"
+                (onClick)="viewOrder(order.id)"
+                [outlined]="true"
+                size="small"
+              ></p-button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  }
+
+  @if (!loading() && orders().length === 0) {
+    <div class="text-center p-8">
+      <p-card>
+        <i class="pi pi-receipt text-6xl text-gray-300 mb-4"></i>
+        <p class="text-xl text-gray-500 mb-4">Še nimate naročil</p>
+        <p-button
+          label="Pojdi na izdelke"
+          icon="pi pi-arrow-left"
+          (onClick)="goToProducts()"
+        ></p-button>
+      </p-card>
+    </div>
+  }
+</div>

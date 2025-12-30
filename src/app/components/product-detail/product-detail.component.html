@@ -1,0 +1,146 @@
+<div class="container mx-auto p-4 max-w-6xl">
+  <p-toast></p-toast>
+
+  <p-button
+    icon="pi pi-arrow-left"
+    label="Nazaj"
+    (onClick)="goBack()"
+    [text]="true"
+    styleClass="mb-4"
+  ></p-button>
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  }
+
+  @let _product = product();
+  @if (_product && !loading()) {
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Image Gallery -->
+      <div>
+        @if (_product?.slike?.length ?? 0 > 0) {
+          <p-card>
+            <p-galleria
+              [value]="_product.slike"
+              [responsiveOptions]="responsiveOptions"
+              [containerStyle]="{ 'max-width': '640px' }"
+              [numVisible]="5"
+              [circular]="true"
+              [showItemNavigators]="true"
+              [showThumbnails]="_product!.slike!.length > 1"
+            >
+              <ng-template pTemplate="item" let-slika>
+                <img
+                  [src]="slika.url"
+                  [alt]="_product.naziv"
+                  class="w-full h-96 object-contain"
+                />
+              </ng-template>
+
+              <ng-template pTemplate="thumbnail" let-slika>
+                <div class="grid grid-cols-4 gap-2">
+                  <img
+                    [src]="slika.url"
+                    [alt]="_product.naziv"
+                    class="w-full h-20 object-cover"
+                  />
+                </div>
+              </ng-template>
+            </p-galleria>
+          </p-card>
+        } @else {
+          <p-card>
+            <div class="w-full h-96 bg-gray-200 flex items-center justify-center">
+              <i class="pi pi-image text-9xl text-gray-400"></i>
+            </div>
+          </p-card>
+        }
+      </div>
+
+      <!-- Product Info -->
+      <div>
+        <p-card>
+          <div class="space-y-4">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <h1 class="text-3xl font-bold">{{ _product.naziv }}</h1>
+                @if (!_product.aktiven) {
+                  <p-tag severity="danger" value="Neaktiven"></p-tag>
+                }
+              </div>
+
+              <div class="text-4xl font-bold text-primary mb-4">
+                {{ _product.cena | number: '1.2-2' }} €
+              </div>
+            </div>
+
+            <p-divider></p-divider>
+
+            <div>
+              <h3 class="font-semibold text-lg mb-2">Opis</h3>
+              <p class="text-gray-700">{{ _product.opis }}</p>
+            </div>
+
+            <p-divider></p-divider>
+
+            <!-- Stock Info -->
+            @if (stockInfo()) {
+              <div>
+                <h3 class="font-semibold text-lg mb-2">Zaloga</h3>
+                <div class="flex items-center gap-2">
+                  <span>Na zalogi:</span>
+                  <p-tag
+                    [value]="stockInfo()?.stock?.toString() || '0'"
+                    [severity]="(stockInfo()?.stock || 0) > 0 ? 'success' : 'danger'"
+                  ></p-tag>
+                </div>
+              </div>
+            }
+
+            <!-- Product Properties -->
+            @if (_product?.lastnosti?.length ?? 0 > 0) {
+              <p-divider></p-divider>
+
+              <h3 class="font-semibold text-lg mb-2">Lastnosti</h3>
+              <div class="grid grid-cols-2 gap-2">
+                @for (lastnost of _product.lastnosti; track lastnost.lastnost) {
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">
+                      {{ lastnost.lastnost }}:
+                    </span>
+                    <span class="font-semibold">
+                      {{ lastnost.vrednost }}
+                    </span>
+                  </div>
+                }
+              </div>
+            }
+
+            <p-divider></p-divider>
+
+            <!-- Add to Cart -->
+            <div class="flex gap-4 items-center">
+              <p-inputNumber
+                [(ngModel)]="quantity"
+                [showButtons]="true"
+                [min]="1"
+                [max]="stockInfo()?.stock || 999"
+                inputStyleClass="w-20"
+              ></p-inputNumber>
+
+              <p-button
+                label="Dodaj v košarico"
+                icon="pi pi-shopping-cart"
+                (onClick)="addToCart()"
+                [disabled]="!_product.aktiven || (stockInfo()?.stock || 0) < 1"
+                styleClass="flex-1"
+              ></p-button>
+            </div>
+          </div>
+        </p-card>
+      </div>
+    </div>
+  }
+</div>

@@ -1,0 +1,142 @@
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IzdelekRESTService } from '../../api/izdelki/api/izdelekREST.service';
+import { KosaricaRESTService } from '../../api/kosarica/api/kosaricaREST.service';
+import { SkladisceRESTService } from '../../api/skladisce/api/skladisceREST.service';
+import { IzdelekDTO } from '../../api/izdelki/model/izdelekDTO';
+import { ZalogaDTO } from '../../api/skladisce/model/zalogaDTO';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { GalleriaModule } from 'primeng/galleria';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MessageModule } from 'primeng/message';
+import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { FormsModule } from '@angular/forms';
+import { DividerModule } from 'primeng/divider';
+
+@Component({
+  selector: 'app-product-detail',
+  standalone: true,
+  imports: [
+    CommonModule,
+    CardModule,
+    ButtonModule,
+    GalleriaModule,
+    ProgressSpinnerModule,
+    MessageModule,
+    TagModule,
+    ToastModule,
+    InputNumberModule,
+    FormsModule,
+    DividerModule,
+  ],
+  providers: [MessageService],
+  templateUrl: 'product-detail.component.html',
+  styles: [],
+})
+export class ProductDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private izdelekService = inject(IzdelekRESTService);
+  private kosaricaService = inject(KosaricaRESTService);
+  private skladisceService = inject(SkladisceRESTService);
+  private messageService = inject(MessageService);
+
+  product = signal<IzdelekDTO | null>(null);
+  stockInfo = signal<ZalogaDTO | null>(null);
+  loading = signal(true);
+  quantity = 1;
+  userId = 1; // Demo user ID
+
+  responsiveOptions = [
+    {
+      breakpoint: '1024px',
+      numVisible: 5,
+    },
+    {
+      breakpoint: '768px',
+      numVisible: 3,
+    },
+    {
+      breakpoint: '560px',
+      numVisible: 1,
+    },
+  ];
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.fetchProduct(+id);
+    }
+  }
+
+  fetchProduct(id: number) {
+    this.loading.set(true);
+
+    this.izdelekService.v1IzdelkiIdGet(id).subscribe({
+      next: (data) => {
+        this.product.set(data);
+        this.loading.set(false);
+        this.fetchStockInfo(id);
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Napaka',
+          detail: 'Napaka pri nalaganju izdelka',
+        });
+      },
+    });
+  }
+
+  fetchStockInfo(id: number) {
+    this.skladisceService.v1SkladisceZalogaIdGet(id).subscribe({
+      next: (data) => {
+        this.stockInfo.set(data);
+      },
+      error: (err) => {
+        console.error('Stock info not available:', err);
+        // Don't show error to user, just log it
+      },
+    });
+  }
+
+  addToCart() {
+    // if (!this.product) return;
+    //
+    // const cartItem: KosaricaDTO = {
+    //   uporabnikId: this.userId,
+    //   izdelekId: this.product.id,
+    //   kolicina: this.quantity
+    // };
+    //
+    // this.kosaricaService.v1KosaricaPost(cartItem).subscribe({
+    //   next: () => {
+    //     this.messageService.add({
+    //       severity: 'success',
+    //       summary: 'Uspešno',
+    //       detail: `${this.product?.naziv} (${this.quantity}x) dodan v košarico`
+    //     });
+    //     this.quantity = 1;
+    //   },
+    //   error: (err) => {
+    //     console.error(err);
+    //     this.messageService.add({
+    //       severity: 'error',
+    //       summary: 'Napaka',
+    //       detail: 'Napaka pri dodajanju v košarico'
+    //     });
+    //   }
+    // });
+  }
+
+  goBack() {
+    this.router.navigate(['/products']);
+  }
+}

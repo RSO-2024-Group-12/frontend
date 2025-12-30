@@ -1,0 +1,173 @@
+<div class="container mx-auto p-4 max-w-6xl">
+  <p-toast></p-toast>
+
+  <p-button
+    icon="pi pi-arrow-left"
+    label="Nazaj na naročila"
+    (onClick)="goBack()"
+    [text]="true"
+    styleClass="mb-4"
+  ></p-button>
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  }
+
+  @let _order = order();
+  @if (_order && !loading()) {
+    <div class="space-y-6">
+      <!-- Order Header -->
+      <p-card>
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-3xl font-bold mb-2">
+              Naročilo #{{ _order.id }}
+            </h2>
+            <p class="text-gray-600">
+              Datum naročila:
+              {{ _order.createdAt | date: 'dd.MM.yyyy HH:mm' }}
+            </p>
+          </div>
+
+          <p-tag
+            [value]="getStatusLabel(_order.status)"
+            [severity]="getStatusSeverity(_order.status)"
+            styleClass="text-lg px-4 py-2"
+          ></p-tag>
+        </div>
+
+        <p-divider></p-divider>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <h3 class="font-semibold text-gray-600 mb-1">Uporabnik ID</h3>
+            <p class="text-lg">{{ _order.userId }}</p>
+          </div>
+
+          <div>
+            <h3 class="font-semibold text-gray-600 mb-1">Skupaj</h3>
+            <p class="text-2xl font-bold text-primary">
+              {{ _order.totalPriceCents | number: '1.2-2' }} €
+            </p>
+          </div>
+
+          <div>
+            <h3 class="font-semibold text-gray-600 mb-1">Št. izdelkov</h3>
+            <p class="text-lg">{{ _order.items?.length || 0 }}</p>
+          </div>
+        </div>
+      </p-card>
+
+      <!-- Order Items -->
+      <p-card>
+        <h3 class="text-2xl font-bold mb-4">Izdelki v naročilu</h3>
+
+        <p-table
+          [value]="_order.items || []"
+          [responsiveLayout]="'scroll'"
+        >
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Izdelek ID</th>
+              <th class="text-center">Količina</th>
+              <th class="text-right">Cena</th>
+              <th class="text-right">Skupaj</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-item>
+            <tr>
+              <td>
+                <span class="font-mono">#{{ item.productId }}</span>
+              </td>
+              <td class="text-center">
+                <span class="font-semibold">{{ item.quantity }}</span>
+              </td>
+              <td class="text-right">
+                {{ item.price | number: '1.2-2' }} €
+              </td>
+              <td class="text-right">
+                <span class="font-bold">
+                  {{
+                    (item.price || 0) * (item.quantity || 0)
+                      | number: '1.2-2'
+                  }} €
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-card>
+
+      <!-- Shipment Tracking -->
+      @if (shipments().length > 0) {
+        <p-card>
+          <h3 class="text-2xl font-bold mb-4">Sledenje pošiljki</h3>
+
+          <div class="space-y-4">
+            @for (shipment of shipments(); track shipment.id) {
+              <div class="border-b pb-4 last:border-b-0">
+                <div class="flex justify-between items-center mb-3">
+                  <div>
+                    <h4 class="font-semibold text-lg">
+                      Pošiljka #{{ shipment.id }}
+                    </h4>
+                    <p class="text-sm text-gray-600">
+                      Številka za sledenje:
+                      {{ shipment.trackingNumber }}
+                    </p>
+                  </div>
+
+                  <p-tag
+                    [value]="getShipmentStatusLabel(shipment.status)"
+                    [severity]="getShipmentStatusSeverity(shipment.status)"
+                  ></p-tag>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-600">Naslov:</span>
+                    <span class="ml-2 font-semibold">
+                      {{ shipment.street }}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span class="text-gray-600">Prevoznik:</span>
+                    <span class="ml-2 font-semibold">
+                      {{ shipment.carrier || 'N/A' }}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span class="text-gray-600">Poslano:</span>
+                    <span class="ml-2 font-semibold">
+                      {{ shipment.updatedAt | date: 'dd.MM.yyyy HH:mm' }}
+                    </span>
+                  </div>
+
+                  <div>
+                    <span class="text-gray-600">Pričakovana dostava:</span>
+                    <span class="ml-2 font-semibold"></span>
+                  </div>
+                </div>
+
+                <div class="mt-4">
+                  <p-button
+                    label="Sledenje v realnem času"
+                    icon="pi pi-map-marker"
+                    (onClick)="trackShipment(shipment.id)"
+                    [outlined]="true"
+                    size="small"
+                  ></p-button>
+                </div>
+              </div>
+            }
+          </div>
+        </p-card>
+      }
+    </div>
+  }
+</div>

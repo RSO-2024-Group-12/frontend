@@ -1,0 +1,132 @@
+<div class="container mx-auto p-4 max-w-7xl">
+  <p-toast></p-toast>
+
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold mb-2">Upravljanje skladišča</h2>
+    <p class="text-gray-600">Pregled zalog in upravljanje s skladiščem</p>
+  </div>
+
+  <div class="mb-4">
+    <p-iconfield iconPosition="left" class="w-full max-w-md">
+      <p-inputicon styleClass="pi pi-search" />
+      <input
+        pInputText
+        type="text"
+        placeholder="Išči izdelke..."
+        (input)="onSearchInput($event)"
+        class="w-full"
+      />
+    </p-iconfield>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  }
+
+  @if (!loading() && filteredProductsWithStock().length > 0) {
+    <p-card>
+      <p-table
+        [value]="filteredProductsWithStock()"
+        [paginator]="true"
+        [rows]="10"
+        [responsiveLayout]="'scroll'"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Izdelek</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Na zalogi</th>
+            <th class="text-center">Rezervirano</th>
+            <th class="text-center">Dostopno</th>
+            <th class="text-right">Cena</th>
+            <th style="width: 12rem"></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-item>
+          <tr>
+            <td>
+              <div class="flex items-center gap-3">
+                @if (item.product.slike?.[0]?.url) {
+                  <img
+                    [src]="item.product.slike[0].url"
+                    [alt]="item.product.naziv"
+                    class="w-12 h-12 object-cover rounded"
+                  />
+                } @else {
+                  <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                    <i class="pi pi-image text-gray-400"></i>
+                  </div>
+                }
+                <div>
+                  <div class="font-semibold">{{ item.product.naziv }}</div>
+                  <div class="text-sm text-gray-500">ID: {{ item.product.id }}</div>
+                </div>
+              </div>
+            </td>
+
+            <td class="text-center">
+              <p-tag
+                [value]="item.product.aktiven ? 'Aktiven' : 'Neaktiven'"
+                [severity]="item.product.aktiven ? 'success' : 'danger'"
+              ></p-tag>
+            </td>
+
+            <td class="text-center">
+              <span class="font-semibold">{{ item.stock?.kolicinaNaZalogi || 0 }}</span>
+            </td>
+
+            <td class="text-center">
+              <span class="font-semibold">{{ item.stock?.rezerviranaKolicina || 0 }}</span>
+            </td>
+
+            <td class="text-center">
+              <p-tag
+                [value]="(item.stock?.dostopnaKolicina || 0).toString()"
+                [severity]="getStockSeverity(item.stock?.dostopnaKolicina || 0)"
+              ></p-tag>
+            </td>
+
+            <td class="text-right">
+              <span class="font-semibold">{{ item.product.cena | number: '1.2-2' }} €</span>
+            </td>
+
+            <td class="text-center">
+              <div class="flex gap-2 justify-center">
+                <p-button
+                  icon="pi pi-plus"
+                  [rounded]="true"
+                  [outlined]="true"
+                  severity="success"
+                  size="small"
+                  pTooltip="Dodaj zalogo"
+                  (onClick)="addStock(item.product.id)"
+                ></p-button>
+                <p-button
+                  icon="pi pi-minus"
+                  [rounded]="true"
+                  [outlined]="true"
+                  severity="warn"
+                  size="small"
+                  pTooltip="Odstrani zalogo"
+                  (onClick)="removeStock(item.product.id)"
+                ></p-button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </p-card>
+  }
+
+  @if (!loading() && filteredProductsWithStock().length === 0) {
+    <div class="text-center p-8">
+      <p-card>
+        <i class="pi pi-warehouse text-6xl text-gray-300 mb-4"></i>
+        <p class="text-xl text-gray-500 mb-4">Ni najdenih izdelkov</p>
+      </p-card>
+    </div>
+  }
+</div>

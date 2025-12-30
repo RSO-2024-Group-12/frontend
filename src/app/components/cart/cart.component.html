@@ -1,0 +1,151 @@
+<div class="container mx-auto p-4 max-w-6xl">
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <div class="mb-6">
+    <h2 class="text-3xl font-bold mb-2">Vaša košarica</h2>
+    <p class="text-gray-600">{{ cartItemsWithProducts().length }} izdelkov v košarici</p>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  }
+
+  @if (!loading()) {
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-2">
+        @if (cartItemsWithProducts().length > 0) {
+          <p-card>
+            <p-table
+              [value]="cartItemsWithProducts()"
+              [responsiveLayout]="'scroll'"
+              styleClass="p-datatable-striped"
+            >
+              <ng-template pTemplate="header">
+                <tr>
+                  <th>Izdelek</th>
+                  <th class="text-center">Cena</th>
+                  <th class="text-center">Količina</th>
+                  <th class="text-right">Skupaj</th>
+                  <th style="width: 8rem"></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-cartItem>
+                <tr>
+                  <td>
+                    <div class="flex items-center gap-4">
+                      @if (cartItem.product?.slike?.[0]?.url) {
+                        <img
+                          [src]="cartItem.product.slike[0].url"
+                          [alt]="cartItem.product.naziv"
+                          class="w-16 h-16 object-cover rounded"
+                        />
+                      } @else {
+                        <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                          <i class="pi pi-image text-2xl text-gray-400"></i>
+                        </div>
+                      }
+                      <div>
+                        <div class="font-semibold">
+                          {{ cartItem.product?.naziv || 'Izdelek #' + cartItem.item.izdelekId }}
+                        </div>
+                        <div class="text-sm text-gray-500">ID: {{ cartItem.item.izdelekId }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <span class="font-semibold">{{ cartItem.product?.cena | number: '1.2-2' }} €</span>
+                  </td>
+                  <td class="text-center">
+                    <p-inputNumber
+                      [(ngModel)]="cartItem.item.kolicina"
+                      [showButtons]="true"
+                      [min]="1"
+                      [max]="99"
+                      inputStyleClass="w-16 text-center"
+                      (onInput)="updateQuantity(cartItem.item)"
+                    ></p-inputNumber>
+                  </td>
+                  <td class="text-right">
+                    <span class="text-lg font-bold">{{ cartItem.subtotal | number: '1.2-2' }} €</span>
+                  </td>
+                  <td class="text-center">
+                    <p-button
+                      icon="pi pi-trash"
+                      severity="danger"
+                      [rounded]="true"
+                      [text]="true"
+                      (onClick)="confirmRemoveItem(cartItem.item)"
+                    ></p-button>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-card>
+        } @else {
+          <p-card>
+            <div class="text-center py-8">
+              <i class="pi pi-shopping-cart text-6xl text-gray-300 mb-4"></i>
+              <p class="text-xl text-gray-500 mb-4">Vaša košarica je prazna</p>
+              <p-button
+                label="Pojdi na izdelke"
+                icon="pi pi-arrow-left"
+                (onClick)="goToProducts()"
+              ></p-button>
+            </div>
+          </p-card>
+        }
+      </div>
+
+      @if (cartItemsWithProducts().length > 0) {
+        <div class="lg:col-span-1">
+          <p-card>
+            <div class="space-y-4">
+              <h3 class="text-xl font-bold mb-4">Povzetek naročila</h3>
+
+              <div class="space-y-2">
+                <div class="flex justify-between text-gray-600">
+                  <span>Vmesna vsota:</span>
+                  <span>{{ calculateSubtotal() | number: '1.2-2' }} €</span>
+                </div>
+                <div class="flex justify-between text-gray-600">
+                  <span>Dostava:</span>
+                  <span>{{ shippingCost() | number: '1.2-2' }} €</span>
+                </div>
+
+                <p-divider></p-divider>
+
+                <div class="flex justify-between text-xl font-bold">
+                  <span>Skupaj:</span>
+                  <span class="text-primary">{{ calculateTotal() | number: '1.2-2' }} €</span>
+                </div>
+              </div>
+
+              <p-divider></p-divider>
+
+              <p-button
+                label="Oddaj naročilo"
+                icon="pi pi-check"
+                severity="success"
+                (onClick)="checkout()"
+                styleClass="w-full"
+                [disabled]="cartItemsWithProducts().length === 0"
+              ></p-button>
+
+              <p-button
+                label="Izprazni košarico"
+                icon="pi pi-trash"
+                severity="danger"
+                [outlined]="true"
+                (onClick)="confirmClearCart()"
+                styleClass="w-full"
+              ></p-button>
+            </div>
+          </p-card>
+        </div>
+      }
+    </div>
+  }
+</div>
