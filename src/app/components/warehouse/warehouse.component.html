@@ -27,6 +27,13 @@
 
   @if (!loading() && filteredProductsWithStock().length > 0) {
     <p-card>
+      <div class="flex justify-end">
+        <p-button
+          styleClass="text-nowrap"
+          [outlined]="true"
+          (onClick)="openAddItemDialog()"
+        >Dodaj izdelek</p-button>
+      </div>
       <p-table
         [value]="filteredProductsWithStock()"
         [paginator]="true"
@@ -42,6 +49,7 @@
             <th class="text-center">Dostopno</th>
             <th class="text-right">Cena</th>
             <th style="width: 12rem"></th>
+            <th style="width: 6rem"></th>
           </tr>
         </ng-template>
 
@@ -52,7 +60,6 @@
                 @if (item.product.slike?.[0]?.url) {
                   <img
                     [src]="item.product.slike[0].url"
-                    [alt]="item.product.naziv"
                     class="w-12 h-12 object-cover rounded"
                   />
                 } @else {
@@ -62,7 +69,7 @@
                 }
                 <div>
                   <div class="font-semibold">{{ item.product.naziv }}</div>
-                  <div class="text-sm text-gray-500">ID: {{ item.product.id }}</div>
+                  <div class="text-sm text-gray-500">ID: {{ item.product.id_izdelek }}</div>
                 </div>
               </div>
             </td>
@@ -75,17 +82,17 @@
             </td>
 
             <td class="text-center">
-              <span class="font-semibold">{{ item.stock?.kolicinaNaZalogi || 0 }}</span>
+              <span class="font-semibold">{{ item.stock?.stock ?? 0 }}</span>
             </td>
 
             <td class="text-center">
-              <span class="font-semibold">{{ item.stock?.rezerviranaKolicina || 0 }}</span>
+              <span class="font-semibold">{{ item.stock?.reserved ?? 0 }}</span>
             </td>
-
+            @let availableStock = (item.stock?.stock ?? 0) - (item.stock?.reserved ?? 0);
             <td class="text-center">
               <p-tag
-                [value]="(item.stock?.dostopnaKolicina || 0).toString()"
-                [severity]="getStockSeverity(item.stock?.dostopnaKolicina || 0)"
+                [value]="(availableStock).toString()"
+                [severity]="getStockSeverity(availableStock)"
               ></p-tag>
             </td>
 
@@ -102,7 +109,7 @@
                   severity="success"
                   size="small"
                   pTooltip="Dodaj zalogo"
-                  (onClick)="addStock(item.product.id)"
+                  (onClick)="addStock(item.product.id_izdelek)"
                 ></p-button>
                 <p-button
                   icon="pi pi-minus"
@@ -111,9 +118,17 @@
                   severity="warn"
                   size="small"
                   pTooltip="Odstrani zalogo"
-                  (onClick)="removeStock(item.product.id)"
+                  (onClick)="removeStock(item.product.id_izdelek)"
                 ></p-button>
               </div>
+            </td>
+            <td>
+              <p-button
+                styleClass="text-nowrap"
+                [outlined]="true"
+                severity="danger"
+                (onClick)="removeItem(item.product.id_izdelek)"
+              >Odstrani izdelek</p-button>
             </td>
           </tr>
         </ng-template>
@@ -130,3 +145,65 @@
     </div>
   }
 </div>
+<p-dialog
+  header="Dodaj nov izdelek"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [(visible)]="showAddDialog"
+>
+  <div class="flex flex-col gap-4">
+
+    <input pInputText placeholder="Naziv"
+           [(ngModel)]="newProduct().naziv" />
+
+    <textarea pInputTextarea rows="3"
+              placeholder="Opis"
+              [(ngModel)]="newProduct().opis"></textarea>
+
+    <input pInputText type="number"
+           placeholder="Cena (€)"
+           [(ngModel)]="newProduct().cena" />
+
+    <div class="flex gap-2 align-items-center">
+      <p-checkbox binary="true"
+                  [(ngModel)]="newProduct().aktiven"></p-checkbox>
+      <label>Aktiven</label>
+    </div>
+
+    <h4>Lastnosti</h4>
+    @for (l of newProduct().lastnostiDodaj; let i = $index; track i) {
+      <div class="flex gap-2">
+        <input pInputText placeholder="Lastnost"
+               [(ngModel)]="l.lastnost" />
+        <input pInputText placeholder="Vrednost"
+               [(ngModel)]="l.vrednost" />
+        <p-button icon="pi pi-times" severity="danger"
+                  [text]="true" (onClick)="removeProperty(i)"></p-button>
+      </div>
+    }
+    <p-button icon="pi pi-plus" label="Dodaj lastnost"
+              (onClick)="addProperty()"></p-button>
+
+    <h4>Slike (URL)</h4>
+    @for (s of newProduct().slikeDodaj; let i = $index; track i) {
+      <div class="flex gap-2">
+        <input pInputText placeholder="https://..."
+               [(ngModel)]="s.url" />
+        <p-button icon="pi pi-times" severity="danger"
+                  [text]="true" (onClick)="removeImage(i)"></p-button>
+      </div>
+    }
+    <p-button icon="pi pi-plus" label="Dodaj sliko"
+              (onClick)="addImage()"></p-button>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Prekliči"
+              severity="secondary"
+              (onClick)="showAddDialog.set(false)"></p-button>
+    <p-button label="Shrani"
+              icon="pi pi-check"
+              (onClick)="saveNewProduct()"></p-button>
+  </ng-template>
+</p-dialog>

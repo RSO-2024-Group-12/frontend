@@ -16,11 +16,90 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { forkJoin } from 'rxjs';
+import { Tooltip } from 'primeng/tooltip';
+import { RequestDTO } from '../../api/skladisce';
+import { FormsModule } from '@angular/forms';
+import { Dialog } from 'primeng/dialog';
+import { Textarea } from 'primeng/textarea';
+import { Checkbox } from 'primeng/checkbox';
 
 interface ProductWithStock {
   product: IzdelekDTO;
   stock: ZalogaDTO | null;
 }
+
+const mockProductsWithStock: ProductWithStock[] = [
+  {
+    product: {
+      id_izdelek: 1,
+      naziv: 'Brezžične slušalke Pro',
+      opis: 'Aktivno odpravljanje šumov in dolga avtonomija baterije.',
+      cena: 129.99,
+      aktiven: true,
+      datum_dodajanja: '2024-02-10T09:00:00Z',
+      datum_spremembe: '2024-05-18T16:20:00Z',
+      zaloga: 40,
+      slike: [
+        {
+          id_slika: 1,
+          url: 'https://example.com/slusalke-front.jpg',
+        },
+      ],
+      lastnosti: [
+        {
+          id_lastnost: 1,
+          lastnost: 'Barva',
+          vrednost: 'Bela',
+        },
+        {
+          id_lastnost: 2,
+          lastnost: 'Baterija',
+          vrednost: '30h',
+        },
+      ],
+    },
+    stock: {
+      id_product: 1,
+      stock: 40,
+      reserved: 5,
+    },
+  },
+  {
+    product: {
+      id_izdelek: 2,
+      naziv: 'Mehanska tipkovnica RGB',
+      opis: 'Tipkovnica z mehanskimi stikali in RGB osvetlitvijo.',
+      cena: 99.5,
+      aktiven: true,
+      datum_dodajanja: '2024-03-01T11:30:00Z',
+      datum_spremembe: '2024-06-02T10:10:00Z',
+      zaloga: 15,
+      slike: [
+        {
+          id_slika: 2,
+          url: 'https://example.com/tipkovnica.jpg',
+        },
+      ],
+      lastnosti: [
+        {
+          id_lastnost: 3,
+          lastnost: 'Stikala',
+          vrednost: 'Red',
+        },
+        {
+          id_lastnost: 4,
+          lastnost: 'Layout',
+          vrednost: 'US',
+        },
+      ],
+    },
+    stock: {
+      id_product: 2,
+      stock: 15,
+      reserved: 2,
+    },
+  },
+];
 
 @Component({
   selector: 'app-warehouse',
@@ -37,6 +116,11 @@ interface ProductWithStock {
     InputTextModule,
     IconFieldModule,
     InputIconModule,
+    Tooltip,
+    FormsModule,
+    Dialog,
+    Textarea,
+    Checkbox,
   ],
   providers: [MessageService],
   templateUrl: 'warehouse.component.html',
@@ -47,10 +131,20 @@ export class WarehouseComponent implements OnInit {
   private skladisceService = inject(SkladisceRESTService);
   private messageService = inject(MessageService);
 
-  productsWithStock = signal<ProductWithStock[]>([]);
-  filteredProductsWithStock = signal<ProductWithStock[]>([]);
+  productsWithStock = signal<ProductWithStock[]>(mockProductsWithStock);
+  filteredProductsWithStock = signal<ProductWithStock[]>(mockProductsWithStock);
   loading = signal(true);
   searchTerm = signal('');
+  showAddDialog = signal(false);
+  newProduct = signal<IzdelekDTO>({
+    naziv: '',
+    opis: '',
+    cena: 0,
+    aktiven: true,
+    lastnostiDodaj: [],
+    slikeDodaj: [],
+  });
+  userId = 1; // Demo user ID
 
   ngOnInit() {
     this.fetchProductsWithStock();
@@ -124,20 +218,66 @@ export class WarehouseComponent implements OnInit {
   addStock(productId: number | undefined) {
     if (!productId) return;
 
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Funkcija v razvoju',
-      detail: 'Dodajanje zaloge bo na voljo v naslednji različici',
+    const requestDto: RequestDTO = {
+      id_request: crypto.randomUUID(),
+      type: 'STOCK_ADDED',
+      id_product: productId,
+      id_user: this.userId,
+      quantityAdd: 1,
+    };
+
+    this.skladisceService.v1SkladiscePost(requestDto).subscribe({
+      next: () => {
+        const productsWithStock = structuredClone(this.productsWithStock());
+        const productWithStock = productsWithStock.find(
+          (el) => el.product.id_izdelek === productId,
+        );
+        if (productWithStock?.stock?.stock) {
+          productWithStock.stock.stock = (productWithStock?.stock?.stock ?? 0) + 1;
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Napaka',
+          detail: 'Napaka pri dodajanju zaloge',
+        });
+      },
     });
   }
 
   removeStock(productId: number | undefined) {
     if (!productId) return;
 
-    this.messageService.add({
-      severity: 'info',
-      summary: 'Funkcija v razvoju',
-      detail: 'Odstranjevanje zaloge bo na voljo v naslednji različici',
+    const requestDto: RequestDTO = {
+      id_request: crypto.randomUUID(),
+      type: 'STOCK_REMOVED',
+      id_product: productId,
+      id_user: this.userId,
+      quantityRemove: 1,
+    };
+
+    this.skladisceService.v1SkladiscePost(requestDto).subscribe({
+      next: () => {
+        const productsWithStock = structuredClone(this.productsWithStock());
+        const productWithStock = productsWithStock.find(
+          (el) => el.product.id_izdelek === productId,
+        );
+        if (productWithStock?.stock?.stock) {
+          productWithStock.stock.stock = (productWithStock?.stock?.stock ?? 0) + 1;
+        }
+        this.productsWithStock.set(productsWithStock);
+        this.filteredProductsWithStock.set(productsWithStock);
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Napaka',
+          detail: 'Napaka pri odstranjevanju zaloge',
+        });
+      },
     });
   }
 
@@ -145,5 +285,87 @@ export class WarehouseComponent implements OnInit {
     if (quantity > 10) return 'success';
     if (quantity > 0) return 'warn';
     return 'danger';
+  }
+
+  openAddItemDialog() {
+    this.newProduct.set({
+      naziv: '',
+      opis: '',
+      cena: 0,
+      aktiven: true,
+      lastnostiDodaj: [],
+      slikeDodaj: [],
+    });
+    this.showAddDialog.set(true);
+  }
+
+  addProperty() {
+    this.newProduct().lastnostiDodaj!.push({ lastnost: '', vrednost: '' });
+  }
+
+  removeProperty(i: number) {
+    this.newProduct().lastnostiDodaj!.splice(i, 1);
+  }
+
+  addImage() {
+    this.newProduct().slikeDodaj!.push({ url: '' });
+  }
+
+  removeImage(i: number) {
+    this.newProduct().slikeDodaj!.splice(i, 1);
+  }
+
+  saveNewProduct() {
+    const product = structuredClone(this.newProduct());
+
+    this.izdelekService.v1IzdelkiPost(product).subscribe({
+      next: (created) => {
+        this.productsWithStock.update((list) => [
+          ...list,
+          { product: created, stock: { stock: 0, reserved: 0 } },
+        ]);
+        this.filteredProductsWithStock.set(this.productsWithStock());
+        this.showAddDialog.set(false);
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Uspeh',
+          detail: 'Izdelek dodan',
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Napaka',
+          detail: 'Napaka pri dodajanju izdelka',
+        });
+      },
+    });
+  }
+
+  protected removeItem(productId: number | undefined) {
+    if (!productId) return;
+
+    this.izdelekService.v1IzdelkiIdDelete(productId).subscribe({
+      next: () => {
+        this.productsWithStock.update((curr) =>
+          curr.filter((el) => el.product.id_izdelek !== productId),
+        );
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Uspeh',
+          detail: 'Izdelek je bil odstranjen',
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Napaka',
+          detail: 'Napaka pri odstranjevanju izdelka',
+        });
+      },
+    });
   }
 }

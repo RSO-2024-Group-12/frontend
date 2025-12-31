@@ -18,6 +18,34 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule } from '@angular/forms';
 import { DividerModule } from 'primeng/divider';
 
+const mockIzdelek: IzdelekDTO = {
+  id_izdelek: 1,
+  naziv: 'Pametna ura X100',
+  opis: 'Pametna ura z merjenjem srčnega utripa in GPS.',
+  cena: 199.99,
+  aktiven: true,
+  datum_dodajanja: '2024-01-15T10:30:00Z',
+  datum_spremembe: '2024-06-01T14:45:00Z',
+  zaloga: 25,
+  slike: [
+    { id_slika: 1, url: '' },
+    { id_slika: 2, url: '' },
+  ],
+  slikeDodaj: [],
+  slikeBrisi: [],
+  lastnosti: [
+    { id_lastnost: 1, lastnost: 'Barva', vrednost: 'Črna' },
+    { id_lastnost: 2, lastnost: 'Velikost', vrednost: '42mm' },
+  ],
+  lastnostiDodaj: [],
+  lastnostiBrisi: [],
+};
+const mockZaloga: ZalogaDTO = {
+  id_product: 1,
+  stock: 25,
+  reserved: 5,
+};
+
 @Component({
   selector: 'app-product-detail',
   standalone: true,
@@ -46,10 +74,10 @@ export class ProductDetailComponent implements OnInit {
   private skladisceService = inject(SkladisceRESTService);
   private messageService = inject(MessageService);
 
-  product = signal<IzdelekDTO | null>(null);
-  stockInfo = signal<ZalogaDTO | null>(null);
+  product = signal<IzdelekDTO | null>(mockIzdelek);
+  stockInfo = signal<ZalogaDTO | null>(mockZaloga);
   loading = signal(true);
-  quantity = 1;
+  quantity = signal(1);
   userId = 1; // Demo user ID
 
   responsiveOptions = [
@@ -113,7 +141,7 @@ export class ProductDetailComponent implements OnInit {
     // const cartItem: KosaricaDTO = {
     //   uporabnikId: this.userId,
     //   izdelekId: this.product.id,
-    //   kolicina: this.quantity
+    //   kolicina: this.quantity()
     // };
     //
     // this.kosaricaService.v1KosaricaPost(cartItem).subscribe({
@@ -121,9 +149,9 @@ export class ProductDetailComponent implements OnInit {
     //     this.messageService.add({
     //       severity: 'success',
     //       summary: 'Uspešno',
-    //       detail: `${this.product?.naziv} (${this.quantity}x) dodan v košarico`
+    //       detail: `${this.product?.naziv} (${this.quantity()}x) dodan v košarico`
     //     });
-    //     this.quantity = 1;
+    //     this.quantity.set(1);
     //   },
     //   error: (err) => {
     //     console.error(err);

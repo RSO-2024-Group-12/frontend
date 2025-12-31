@@ -14,6 +14,60 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { DividerModule } from 'primeng/divider';
 
+const mockOrder: OrderDto = {
+  id: 101,
+  userId: 42,
+  recipientName: 'Janez Novak',
+  street: 'Glavna ulica',
+  houseNumber: '12A',
+  city: 'Ljubljana',
+  postalCode: '1000',
+  country: 'Slovenia',
+  totalPriceCents: 25997,
+  shippingCostCents: 499,
+  paid: true,
+  paymentMethod: 'CREDIT_CARD',
+  shipmentId: 5551,
+  trackingNumber: 'SI123456789',
+  status: 'SHIPPED',
+  createdAt: '2024-11-20T09:15:00Z',
+  updatedAt: '2024-11-21T14:30:00Z',
+  items: [
+    {
+      id: 1,
+      productId: 10,
+      quantity: 1,
+      unitPriceCents: 19999,
+      totalPriceCents: 19999,
+    },
+    {
+      id: 2,
+      productId: 25,
+      quantity: 2,
+      unitPriceCents: 3000,
+      totalPriceCents: 6000,
+    },
+  ],
+};
+const mockShipments: ShipmentDto[] = [
+  {
+    id: 9001,
+    orderId: 101,
+    trackingNumber: 'SI-EXP-987654321',
+    carrier: 'Pošta Slovenije',
+    status: 'IN_TRANSIT',
+    recipientName: 'Janez Novak',
+    street: 'Glavna ulica',
+    houseNumber: '12A',
+    city: 'Ljubljana',
+    postalCode: '1000',
+    country: 'Slovenia',
+    shippingCostCents: 499,
+    createdAt: '2024-11-21T08:45:00Z',
+    updatedAt: '2024-11-22T13:10:00Z',
+  },
+];
+
 @Component({
   selector: 'app-order-detail',
   standalone: true,
@@ -40,8 +94,8 @@ export class OrderDetailComponent implements OnInit {
   private shipmentsService = inject(UserShipmentsEndpointService);
   private messageService = inject(MessageService);
 
-  order = signal<OrderDto | null>(null);
-  shipments = signal<ShipmentDto[]>([]);
+  order = signal<OrderDto | null>(mockOrder);
+  shipments = signal<ShipmentDto[]>(mockShipments);
   loading = signal(true);
 
   ngOnInit() {
