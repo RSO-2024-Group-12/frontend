@@ -1,0 +1,16 @@
+<p-card header="Podatki za dostavo">
+  <div class="grid grid-cols-2 gap-4">
+    <input pInputText placeholder="Ulica" [(ngModel)]="address.street" />
+    <input pInputText placeholder="Hišna številka" [(ngModel)]="address.house_number" />
+    <input pInputText placeholder="Mesto" [(ngModel)]="address.city" />
+    <input pInputText placeholder="Poštna številka" [(ngModel)]="address.postal_code" />
+    <input pInputText placeholder="Država" [(ngModel)]="address.country" />
+  </div>
+
+  <p-button
+    label="Plačaj s PayPal"
+    icon="pi pi-paypal"
+    class="mt-4"
+    (onClick)="submit()"
+  ></p-button>
+</p-card>

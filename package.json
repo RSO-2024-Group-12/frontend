@@ -16,7 +16,8 @@
     "generate-api:narocila": "openapi-generator-cli generate -i http://localhost:8083/q/openapi -g typescript-angular -o src/app/api/narocila --skip-validate-spec",
     "generate-api:posiljanje": "openapi-generator-cli generate -i http://localhost:8084/q/openapi -g typescript-angular -o src/app/api/posiljanje --skip-validate-spec",
     "generate-api:skladisce": "openapi-generator-cli generate -i http://localhost:8082/q/openapi -g typescript-angular -o src/app/api/skladisce --skip-validate-spec",
-    "generate-api": "pnpm run generate-api:izdelki && pnpm run generate-api:kosarica && pnpm run generate-api:narocila && pnpm run generate-api:posiljanje && pnpm run generate-api:skladisce"
+    "generate-api:nakup": "openapi-generator-cli generate -i http://localhost:8085/q/openapi -g typescript-angular -o src/app/api/nakup --skip-validate-spec",
+    "generate-api": "pnpm run generate-api:izdelki && pnpm run generate-api:kosarica && pnpm run generate-api:narocila && pnpm run generate-api:posiljanje && pnpm run generate-api:skladisce && pnpm run generate-api:nakup"
   },
   "prettier": {
     "printWidth": 100,

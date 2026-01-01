@@ -344,17 +344,7 @@ export class CartComponent implements OnInit {
   }
 
   checkout() {
-    // Navigate to orders page or show success message
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Naročilo oddano',
-      detail: 'Vaše naročilo je bilo uspešno oddano!',
-    });
-    // TODO: Idk
-    // In a real app, you would call the narocila service here
-    setTimeout(() => {
-      this.router.navigate(['/orders']);
-    }, 1500);
+    this.router.navigate(['/checkout']);
   }
 
   goToProducts() {
