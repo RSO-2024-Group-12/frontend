@@ -224,6 +224,7 @@ export class WarehouseComponent implements OnInit {
       id_product: productId,
       id_user: this.userId,
       quantityAdd: 1,
+      quantityRemove: 0,
     };
 
     this.skladisceService.v1SkladiscePost(requestDto).subscribe({
@@ -235,6 +236,8 @@ export class WarehouseComponent implements OnInit {
         if (productWithStock?.stock?.stock) {
           productWithStock.stock.stock = (productWithStock?.stock?.stock ?? 0) + 1;
         }
+        this.productsWithStock.set(productsWithStock);
+        this.filteredProductsWithStock.set(productsWithStock);
       },
       error: (err) => {
         console.error(err);
@@ -255,6 +258,7 @@ export class WarehouseComponent implements OnInit {
       type: 'STOCK_REMOVED',
       id_product: productId,
       id_user: this.userId,
+      quantityAdd: 0,
       quantityRemove: 1,
     };
 
@@ -265,7 +269,7 @@ export class WarehouseComponent implements OnInit {
           (el) => el.product.id_izdelek === productId,
         );
         if (productWithStock?.stock?.stock) {
-          productWithStock.stock.stock = (productWithStock?.stock?.stock ?? 0) + 1;
+          productWithStock.stock.stock = (productWithStock?.stock?.stock ?? 0) - 1;
         }
         this.productsWithStock.set(productsWithStock);
         this.filteredProductsWithStock.set(productsWithStock);
@@ -349,9 +353,15 @@ export class WarehouseComponent implements OnInit {
 
     this.izdelekService.v1IzdelkiIdDelete(productId).subscribe({
       next: () => {
-        this.productsWithStock.update((curr) =>
-          curr.filter((el) => el.product.id_izdelek !== productId),
+        const productsWithStock = structuredClone(this.productsWithStock());
+        const productWithStock = productsWithStock.find(
+          (el) => el.product.id_izdelek === productId,
         );
+        if (productWithStock?.product) {
+          productWithStock.product.aktiven = false;
+        }
+        this.productsWithStock.set(productsWithStock);
+        this.filteredProductsWithStock.set(productsWithStock);
         this.messageService.add({
           severity: 'success',
           summary: 'Uspeh',

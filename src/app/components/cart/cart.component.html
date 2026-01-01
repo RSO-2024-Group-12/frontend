@@ -33,54 +33,55 @@
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-cartItem>
-                <tr>
-                  <td>
-                    <div class="flex items-center gap-4">
-                      @if (cartItem.product?.slike?.[0]?.url) {
-                        <img
-                          [src]="cartItem.product.slike[0].url"
-                          [alt]="cartItem.product.naziv"
-                          class="w-16 h-16 object-cover rounded"
-                        />
-                      } @else {
-                        <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
-                          <i class="pi pi-image text-2xl text-gray-400"></i>
+                @if (cartItem.item.kolicina > 0) {
+                  <tr>
+                    <td>
+                      <div class="flex items-center gap-4">
+                        @if (cartItem.product?.slike?.[0]?.url) {
+                          <img
+                            [src]="cartItem.product.slike[0].url"
+                            class="w-16 h-16 object-cover rounded"
+                          />
+                        } @else {
+                          <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                            <i class="pi pi-image text-2xl text-gray-400"></i>
+                          </div>
+                        }
+                        <div>
+                          <div class="font-semibold">
+                            {{ cartItem.product?.naziv || 'Izdelek #' + cartItem.item.id_izdelek }}
+                          </div>
+                          <div class="text-sm text-gray-500">ID: {{ cartItem.item.id_izdelek }}</div>
                         </div>
-                      }
-                      <div>
-                        <div class="font-semibold">
-                          {{ cartItem.product?.naziv || 'Izdelek #' + cartItem.item.izdelekId }}
-                        </div>
-                        <div class="text-sm text-gray-500">ID: {{ cartItem.item.izdelekId }}</div>
                       </div>
-                    </div>
-                  </td>
-                  <td class="text-center">
-                    <span class="font-semibold">{{ cartItem.product?.cena | number: '1.2-2' }} €</span>
-                  </td>
-                  <td class="text-center">
-                    <p-inputNumber
-                      [(ngModel)]="cartItem.item.kolicina"
-                      [showButtons]="true"
-                      [min]="1"
-                      [max]="99"
-                      inputStyleClass="w-16 text-center"
-                      (onInput)="updateQuantity(cartItem.item)"
-                    ></p-inputNumber>
-                  </td>
-                  <td class="text-right">
-                    <span class="text-lg font-bold">{{ cartItem.subtotal | number: '1.2-2' }} €</span>
-                  </td>
-                  <td class="text-center">
-                    <p-button
-                      icon="pi pi-trash"
-                      severity="danger"
-                      [rounded]="true"
-                      [text]="true"
-                      (onClick)="confirmRemoveItem(cartItem.item)"
-                    ></p-button>
-                  </td>
-                </tr>
+                    </td>
+                    <td class="text-center">
+                      <span class="font-semibold">{{ cartItem.item?.cena | number: '1.2-2' }} €</span>
+                    </td>
+                    <td class="text-center">
+                      <p-inputNumber
+                        [(ngModel)]="cartItem.item.kolicina"
+                        [showButtons]="true"
+                        [min]="1"
+                        [max]="99"
+                        inputStyleClass="w-24 text-center"
+                        (onInput)="updateQuantity(cartItem.item)"
+                      ></p-inputNumber>
+                    </td>
+                    <td class="text-right">
+                      <span class="text-lg font-bold">{{ cartItem.subtotal | number: '1.2-2' }} €</span>
+                    </td>
+                    <td class="text-center">
+                      <p-button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        [rounded]="true"
+                        [text]="true"
+                        (onClick)="confirmRemoveItem(cartItem.item)"
+                      ></p-button>
+                    </td>
+                  </tr>
+                }
               </ng-template>
             </p-table>
           </p-card>

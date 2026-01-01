@@ -4,17 +4,6 @@
       <i class="pi pi-shopping-bag text-2xl mr-2 text-primary"></i>
       <span class="text-xl font-bold mr-4">Nakupify</span>
     </ng-template>
-    <ng-template #end>
-      <p-button
-        icon="pi pi-shopping-cart"
-        [routerLink]="'/cart'"
-        [text]="true"
-        [rounded]="true"
-        severity="secondary"
-        [badge]="cartItemCount().toString()"
-        badgeSeverity="success"
-      ></p-button>
-    </ng-template>
   </p-menubar>
 </header>
 

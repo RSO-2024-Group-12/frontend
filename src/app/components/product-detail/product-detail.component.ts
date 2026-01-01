@@ -17,6 +17,7 @@ import { MessageService } from 'primeng/api';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule } from '@angular/forms';
 import { DividerModule } from 'primeng/divider';
+import { KosaricaDTO } from '../../api/kosarica';
 
 const mockIzdelek: IzdelekDTO = {
   id_izdelek: 1,
@@ -136,32 +137,38 @@ export class ProductDetailComponent implements OnInit {
   }
 
   addToCart() {
-    // if (!this.product) return;
-    //
-    // const cartItem: KosaricaDTO = {
-    //   uporabnikId: this.userId,
-    //   izdelekId: this.product.id,
-    //   kolicina: this.quantity()
-    // };
-    //
-    // this.kosaricaService.v1KosaricaPost(cartItem).subscribe({
-    //   next: () => {
-    //     this.messageService.add({
-    //       severity: 'success',
-    //       summary: 'Uspešno',
-    //       detail: `${this.product?.naziv} (${this.quantity()}x) dodan v košarico`
-    //     });
-    //     this.quantity.set(1);
-    //   },
-    //   error: (err) => {
-    //     console.error(err);
-    //     this.messageService.add({
-    //       severity: 'error',
-    //       summary: 'Napaka',
-    //       detail: 'Napaka pri dodajanju v košarico'
-    //     });
-    //   }
-    // });
+    const product = this.product();
+    if (!product) return;
+
+    const cartItem: KosaricaDTO = {
+      id_uporabnik: this.userId,
+      kosarica: [
+        {
+          id_izdelek: product.id_izdelek,
+          cena: product.cena,
+          kolicina: this.quantity(),
+        },
+      ],
+    };
+
+    this.kosaricaService.v1KosaricaPost(cartItem).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Uspešno',
+          detail: `${product.naziv} (${this.quantity()}x) dodan v košarico`,
+        });
+        this.quantity.set(1);
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Napaka',
+          detail: 'Napaka pri dodajanju v košarico',
+        });
+      },
+    });
   }
 
   goBack() {

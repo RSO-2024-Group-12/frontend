@@ -17,6 +17,7 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { ImageModule } from 'primeng/image';
+import { KosaricaDTO } from '../../api/kosarica';
 
 const mockIzdelki: IzdelekDTO[] = [
   {
@@ -134,33 +135,34 @@ export class ProductListComponent implements OnInit {
   }
 
   addToCart(product: IzdelekDTO) {
-    // const cartItem: KosaricaDTO = {
-    //   id_uporabnik: this.userId,
-    //   kosarica: [
-    //     {
-    //       id_kosarica:
-    //     }
-    //   ]
-    //   izdelekId: product.id_izdelek,
-    //   kolicina: 1
-    // };
-    // this.kosaricaService.v1KosaricaPost(cartItem).subscribe({
-    //   next: () => {
-    //     this.messageService.add({
-    //       severity: 'success',
-    //       summary: 'Uspešno',
-    //       detail: `${product.naziv} dodan v košarico`
-    //     });
-    //   },
-    //   error: (err) => {
-    //     console.error(err);
-    //     this.messageService.add({
-    //       severity: 'error',
-    //       summary: 'Napaka',
-    //       detail: 'Napaka pri dodajanju v košarico'
-    //     });
-    //   }
-    // });
+    const cartItem: KosaricaDTO = {
+      id_uporabnik: this.userId,
+      kosarica: [
+        {
+          id_izdelek: product.id_izdelek,
+          cena: product.cena,
+          kolicina: 1,
+        },
+      ],
+    };
+
+    this.kosaricaService.v1KosaricaPost(cartItem).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Uspešno',
+          detail: `${product.naziv} dodan v košarico`,
+        });
+      },
+      error: (err) => {
+        console.error(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Napaka',
+          detail: 'Napaka pri dodajanju v košarico',
+        });
+      },
+    });
   }
 
   viewProduct(id: number | undefined) {
