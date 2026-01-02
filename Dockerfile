@@ -2,20 +2,20 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm ci
+RUN corepack enable
+
+COPY package.json pnpm-lock.yaml ./
+
+RUN pnpm install --frozen-lockfile
 
 COPY . .
-RUN npm run build -- --configuration production
+
+RUN pnpm run build --configuration production
+
 
 FROM nginx:1.25-alpine
 
-RUN rm -rf /usr/share/nginx/html/*
-
-COPY --from=build /app/dist/frontend /usr/share/nginx/html
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/your-app-name /usr/share/nginx/html
 
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
