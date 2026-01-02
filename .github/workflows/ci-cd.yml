@@ -16,15 +16,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: npm
+          cache: "pnpm"
+
+      # Install pnpm
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
 
       # Install dependencies
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       # Build Angular app
       - name: Build Angular app
-        run: npm run build -- --configuration production
+        run: pnpm run build --configuration production
 
   docker-and-deploy:
     needs: build-test
