@@ -1,16 +1,61 @@
-<p-card header="Podatki za dostavo">
-  <div class="grid grid-cols-2 gap-4">
-    <input pInputText placeholder="Ulica" [(ngModel)]="address.street" />
-    <input pInputText placeholder="Hišna številka" [(ngModel)]="address.house_number" />
-    <input pInputText placeholder="Mesto" [(ngModel)]="address.city" />
-    <input pInputText placeholder="Poštna številka" [(ngModel)]="address.postal_code" />
-    <input pInputText placeholder="Država" [(ngModel)]="address.country" />
-  </div>
+<div class="container mx-auto p-4 max-w-6xl">
+  <p-toast></p-toast>
+  @if (loading()) {
+    <div class="flex justify-center p-8">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
+  }
 
-  <p-button
-    label="Plačaj s PayPal"
-    icon="pi pi-paypal"
-    class="mt-4"
-    (onClick)="submit()"
-  ></p-button>
-</p-card>
+  @if (!loading()) {
+    <p-card class="mb-6" header="Povzetek naročila">
+      <div class="space-y-4">
+        @let kosarica = cart()?.kosarica ?? [];
+        @for (item of kosarica; track item.id_kosarica) {
+          <div class="flex justify-between items-center border-b pb-2">
+            <div>
+              <div class="font-medium">{{ item.naziv }}</div>
+              <div class="text-sm text-gray-500">
+                {{ item.kolicina }} × {{ item.cena | number:'1.2-2' }} €
+              </div>
+            </div>
+
+            <div class="font-semibold">
+              {{ (item.cena ?? 0) * (item.kolicina ?? 0) | number:'1.2-2' }} €
+            </div>
+          </div>
+        }
+        <div class="flex justify-between items-center border-b pb-2">
+          <div>
+            <div class="font-medium">Dostava</div>
+          </div>
+
+          <div class="font-semibold">
+            {{ shippingCost | number:'1.2-2' }} €
+          </div>
+        </div>
+        <div class="flex justify-between items-center text-lg font-bold">
+          <span>Skupaj</span>
+          <span>
+            {{ totalCost() | number:'1.2-2' }} €
+      </span>
+        </div>
+      </div>
+    </p-card>
+    <p-card header="Podatki za dostavo">
+      <div class="grid grid-cols-2 gap-4">
+        <input pInputText placeholder="Ulica" [(ngModel)]="address.street" />
+        <input pInputText placeholder="Hišna številka" [(ngModel)]="address.house_number" />
+        <input pInputText placeholder="Mesto" [(ngModel)]="address.city" />
+        <input pInputText placeholder="Poštna številka" [(ngModel)]="address.postal_code" />
+        <input pInputText placeholder="Država" [(ngModel)]="address.country" />
+      </div>
+
+      <p-button
+        label="Plačaj s PayPal"
+        icon="pi pi-paypal"
+        styleClass="mt-4"
+        (onClick)="submit()"
+      ></p-button>
+    </p-card>
+  }
+</div>

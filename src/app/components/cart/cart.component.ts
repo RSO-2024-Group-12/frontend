@@ -156,7 +156,7 @@ export class CartComponent implements OnInit {
   loading = signal(true);
 
   userId = 1; // Demo user ID
-  shippingCost = signal(4.99);
+  shippingCost = 4.99;
 
   ngOnInit() {
     this.fetchCart();
@@ -340,7 +340,7 @@ export class CartComponent implements OnInit {
   }
 
   calculateTotal(): number {
-    return this.calculateSubtotal() + this.shippingCost();
+    return this.calculateSubtotal() + this.shippingCost;
   }
 
   checkout() {
