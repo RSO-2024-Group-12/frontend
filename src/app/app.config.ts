@@ -15,9 +15,11 @@ import { BASE_PATH as KOSARICA_BASE_PATH } from './api/kosarica/variables';
 import { BASE_PATH as NAROCILA_BASE_PATH } from './api/narocila/variables';
 import { BASE_PATH as POSILJANJE_BASE_PATH } from './api/posiljanje/variables';
 import { BASE_PATH as SKLADISCE_BASE_PATH } from './api/skladisce/variables';
+import { provideKeycloakAngular } from './keycloak.config';
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    provideKeycloakAngular(),
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideHttpClient(),

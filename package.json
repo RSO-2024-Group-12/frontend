@@ -45,6 +45,8 @@
     "@primeuix/themes": "^2.0.2",
     "@tailwindcss/cli": "^4.1.18",
     "@tailwindcss/postcss": "^4.1.18",
+    "keycloak-angular": "^21.0.0",
+    "keycloak-js": "^26.2.2",
     "primeicons": "^7.0.0",
     "primeng": "^21.0.2",
     "rxjs": "~7.8.0",
