@@ -36,10 +36,10 @@ export const appConfig: ApplicationConfig = {
     UserShipmentsEndpointService,
     SkladisceRESTService,
     // Base paths for microservices
-    { provide: IZDELKI_BASE_PATH, useValue: 'http://localhost:8080' },
-    { provide: KOSARICA_BASE_PATH, useValue: 'http://localhost:8081' },
-    { provide: SKLADISCE_BASE_PATH, useValue: 'http://localhost:8082' },
-    { provide: NAROCILA_BASE_PATH, useValue: 'http://localhost:8083' },
-    { provide: POSILJANJE_BASE_PATH, useValue: 'http://localhost:8084' },
+    { provide: IZDELKI_BASE_PATH, useValue: '' },
+    { provide: KOSARICA_BASE_PATH, useValue: '' },
+    { provide: SKLADISCE_BASE_PATH, useValue: '' },
+    { provide: NAROCILA_BASE_PATH, useValue: '' },
+    { provide: POSILJANJE_BASE_PATH, useValue: '' },
   ],
 };
