@@ -13,8 +13,7 @@ ingress:
   enabled: true
   className: nginx
   hosts:
-    - host: angular.example.com # TODO:
-      paths:
+    - paths:
         - path: /
           pathType: Prefix
 

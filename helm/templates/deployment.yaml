@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: { { include "frontend.fullname" . } }
+  name: frontend
 spec:
-  replicas: { { .Values.replicaCount } }
+  replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: { { include "frontend.name" . } }
+      app: frontend
   template:
     metadata:
       labels:
-        app: { { include "frontend.name" . } }
+        app: frontend
     spec:
       containers:
         - name: angular
@@ -18,4 +18,4 @@ spec:
           ports:
             - containerPort: 80
           resources:
-            { { - toYaml .Values.resources | nindent 12 } }
+            {{ - toYaml .Values.resources | nindent 12 }}
