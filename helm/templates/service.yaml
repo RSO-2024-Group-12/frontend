@@ -8,4 +8,4 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: 80
   selector:
-    app: frontend-service
+    app: frontend
