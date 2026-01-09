@@ -25,104 +25,104 @@ interface CartItemWithProduct {
   subtotal: number;
 }
 
-const mockCartItemsWithProducts = [
-  {
-    item: {
-      id_kosarica: 101,
-      id_izdelek: 1001,
-      naziv: 'Mleko',
-      cena: 1.29,
-      kolicina: 2,
-    },
-    product: {
-      id_izdelek: 1001,
-      naziv: 'Mleko',
-      opis: 'Sveže polnomastno mleko',
-      cena: 1.29,
-      aktiven: true,
-      datum_dodajanja: '2024-01-10',
-      zaloga: 120,
-      slike: [{ id_slika: 1, url: 'https://example.com/mleko.jpg' }],
-      lastnosti: [
-        { id_lastnost: 1, lastnost: 'Maščoba', vrednost: '3.5%' },
-        { id_lastnost: 2, lastnost: 'Pakiranje', vrednost: '1L' },
-      ],
-    },
-    subtotal: 2 * 1.29,
-  },
-  {
-    item: {
-      id_kosarica: 102,
-      id_izdelek: 1002,
-      naziv: 'Kruh',
-      cena: 2.49,
-      kolicina: 1,
-    },
-    product: {
-      id_izdelek: 1002,
-      naziv: 'Kruh',
-      opis: 'Sveže pečen bel kruh',
-      cena: 2.49,
-      aktiven: true,
-      datum_dodajanja: '2024-01-12',
-      zaloga: 45,
-      slike: [{ id_slika: 2, url: 'https://example.com/kruh.jpg' }],
-      lastnosti: [{ id_lastnost: 3, lastnost: 'Teža', vrednost: '500g' }],
-    },
-    subtotal: 1 * 2.49,
-  },
-  {
-    item: {
-      id_kosarica: 103,
-      id_izdelek: 1003,
-      naziv: 'Jabolka',
-      cena: 0.99,
-      kolicina: 5,
-    },
-    product: {
-      id_izdelek: 1003,
-      naziv: 'Jabolka',
-      opis: 'Sveža domača jabolka',
-      cena: 0.99,
-      aktiven: true,
-      datum_dodajanja: '2024-01-15',
-      zaloga: 200,
-      slike: [{ id_slika: 3, url: 'https://example.com/jabolka.jpg' }],
-      lastnosti: [
-        { id_lastnost: 4, lastnost: 'Sorta', vrednost: 'Gala' },
-        { id_lastnost: 5, lastnost: 'Poreklo', vrednost: 'Slovenija' },
-      ],
-    },
-    subtotal: 5 * 0.99,
-  },
-];
-
-const mockCart = {
-  id_uporabnik: 1,
-  kosarica: [
-    {
-      id_kosarica: 101,
-      id_izdelek: 1001,
-      naziv: 'Mleko',
-      cena: 1.29,
-      kolicina: 2,
-    },
-    {
-      id_kosarica: 102,
-      id_izdelek: 1002,
-      naziv: 'Kruh',
-      cena: 2.49,
-      kolicina: 1,
-    },
-    {
-      id_kosarica: 103,
-      id_izdelek: 1003,
-      naziv: 'Jabolka',
-      cena: 0.99,
-      kolicina: 5,
-    },
-  ],
-};
+// const mockCartItemsWithProducts = [
+//   {
+//     item: {
+//       id_kosarica: 101,
+//       id_izdelek: 1001,
+//       naziv: 'Mleko',
+//       cena: 1.29,
+//       kolicina: 2,
+//     },
+//     product: {
+//       id_izdelek: 1001,
+//       naziv: 'Mleko',
+//       opis: 'Sveže polnomastno mleko',
+//       cena: 1.29,
+//       aktiven: true,
+//       datum_dodajanja: '2024-01-10',
+//       zaloga: 120,
+//       slike: [{ id_slika: 1, url: 'https://example.com/mleko.jpg' }],
+//       lastnosti: [
+//         { id_lastnost: 1, lastnost: 'Maščoba', vrednost: '3.5%' },
+//         { id_lastnost: 2, lastnost: 'Pakiranje', vrednost: '1L' },
+//       ],
+//     },
+//     subtotal: 2 * 1.29,
+//   },
+//   {
+//     item: {
+//       id_kosarica: 102,
+//       id_izdelek: 1002,
+//       naziv: 'Kruh',
+//       cena: 2.49,
+//       kolicina: 1,
+//     },
+//     product: {
+//       id_izdelek: 1002,
+//       naziv: 'Kruh',
+//       opis: 'Sveže pečen bel kruh',
+//       cena: 2.49,
+//       aktiven: true,
+//       datum_dodajanja: '2024-01-12',
+//       zaloga: 45,
+//       slike: [{ id_slika: 2, url: 'https://example.com/kruh.jpg' }],
+//       lastnosti: [{ id_lastnost: 3, lastnost: 'Teža', vrednost: '500g' }],
+//     },
+//     subtotal: 1 * 2.49,
+//   },
+//   {
+//     item: {
+//       id_kosarica: 103,
+//       id_izdelek: 1003,
+//       naziv: 'Jabolka',
+//       cena: 0.99,
+//       kolicina: 5,
+//     },
+//     product: {
+//       id_izdelek: 1003,
+//       naziv: 'Jabolka',
+//       opis: 'Sveža domača jabolka',
+//       cena: 0.99,
+//       aktiven: true,
+//       datum_dodajanja: '2024-01-15',
+//       zaloga: 200,
+//       slike: [{ id_slika: 3, url: 'https://example.com/jabolka.jpg' }],
+//       lastnosti: [
+//         { id_lastnost: 4, lastnost: 'Sorta', vrednost: 'Gala' },
+//         { id_lastnost: 5, lastnost: 'Poreklo', vrednost: 'Slovenija' },
+//       ],
+//     },
+//     subtotal: 5 * 0.99,
+//   },
+// ];
+//
+// const mockCart = {
+//   id_uporabnik: 1,
+//   kosarica: [
+//     {
+//       id_kosarica: 101,
+//       id_izdelek: 1001,
+//       naziv: 'Mleko',
+//       cena: 1.29,
+//       kolicina: 2,
+//     },
+//     {
+//       id_kosarica: 102,
+//       id_izdelek: 1002,
+//       naziv: 'Kruh',
+//       cena: 2.49,
+//       kolicina: 1,
+//     },
+//     {
+//       id_kosarica: 103,
+//       id_izdelek: 1003,
+//       naziv: 'Jabolka',
+//       cena: 0.99,
+//       kolicina: 5,
+//     },
+//   ],
+// };
 
 @Component({
   selector: 'app-cart',
@@ -151,8 +151,8 @@ export class CartComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
   private router = inject(Router);
 
-  cart = signal<KosaricaDTO | null>(mockCart);
-  cartItemsWithProducts = signal<CartItemWithProduct[]>(mockCartItemsWithProducts);
+  cart = signal<KosaricaDTO | null>(null);
+  cartItemsWithProducts = signal<CartItemWithProduct[]>([]);
   loading = signal(true);
 
   userId = 1; // Demo user ID

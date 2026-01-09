@@ -9,7 +9,7 @@ export const provideKeycloakAngular = () =>
       clientId: env.KEYCLOAK_CLIENT_ID,
     },
     initOptions: {
-      onLoad: 'login-required',
+      onLoad: 'check-sso',
       pkceMethod: 'S256',
       checkLoginIframe: false,
     },

@@ -12,32 +12,32 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
 import { DecimalPipe } from '@angular/common';
 
-const mockCart = {
-  id_uporabnik: 1,
-  kosarica: [
-    {
-      id_kosarica: 101,
-      id_izdelek: 1001,
-      naziv: 'Mleko',
-      cena: 1.29,
-      kolicina: 2,
-    },
-    {
-      id_kosarica: 102,
-      id_izdelek: 1002,
-      naziv: 'Kruh',
-      cena: 2.49,
-      kolicina: 1,
-    },
-    {
-      id_kosarica: 103,
-      id_izdelek: 1003,
-      naziv: 'Jabolka',
-      cena: 0.99,
-      kolicina: 5,
-    },
-  ],
-};
+// const mockCart = {
+//   id_uporabnik: 1,
+//   kosarica: [
+//     {
+//       id_kosarica: 101,
+//       id_izdelek: 1001,
+//       naziv: 'Mleko',
+//       cena: 1.29,
+//       kolicina: 2,
+//     },
+//     {
+//       id_kosarica: 102,
+//       id_izdelek: 1002,
+//       naziv: 'Kruh',
+//       cena: 2.49,
+//       kolicina: 1,
+//     },
+//     {
+//       id_kosarica: 103,
+//       id_izdelek: 1003,
+//       naziv: 'Jabolka',
+//       cena: 0.99,
+//       kolicina: 5,
+//     },
+//   ],
+// };
 
 @Component({
   selector: 'app-checkout',
@@ -53,7 +53,7 @@ export class CheckoutComponent implements OnInit {
   private router = inject(Router);
 
   userId = 1; // Demo user ID
-  cart = signal<KosaricaDTO | null>(mockCart);
+  cart = signal<KosaricaDTO | null>(null);
   loading = signal(true);
   shippingCost = 4.99;
 

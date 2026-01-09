@@ -19,30 +19,30 @@ import { MessageService } from 'primeng/api';
 import { ImageModule } from 'primeng/image';
 import { KosaricaDTO } from '../../api/kosarica';
 
-const mockIzdelki: IzdelekDTO[] = [
-  {
-    id_izdelek: 1,
-    naziv: 'Pametna ura X100',
-    opis: 'Pametna ura z merjenjem srčnega utripa in GPS.',
-    cena: 199.99,
-    aktiven: true,
-    datum_dodajanja: '2024-01-15T10:30:00Z',
-    datum_spremembe: '2024-06-01T14:45:00Z',
-    zaloga: 25,
-    slike: [
-      { id_slika: 1, url: '' },
-      { id_slika: 2, url: '' },
-    ],
-    slikeDodaj: [],
-    slikeBrisi: [],
-    lastnosti: [
-      { id_lastnost: 1, lastnost: 'Barva', vrednost: 'Črna' },
-      { id_lastnost: 2, lastnost: 'Velikost', vrednost: '42mm' },
-    ],
-    lastnostiDodaj: [],
-    lastnostiBrisi: [],
-  },
-];
+// const mockIzdelki: IzdelekDTO[] = [
+//   {
+//     id_izdelek: 1,
+//     naziv: 'Pametna ura X100',
+//     opis: 'Pametna ura z merjenjem srčnega utripa in GPS.',
+//     cena: 199.99,
+//     aktiven: true,
+//     datum_dodajanja: '2024-01-15T10:30:00Z',
+//     datum_spremembe: '2024-06-01T14:45:00Z',
+//     zaloga: 25,
+//     slike: [
+//       { id_slika: 1, url: '' },
+//       { id_slika: 2, url: '' },
+//     ],
+//     slikeDodaj: [],
+//     slikeBrisi: [],
+//     lastnosti: [
+//       { id_lastnost: 1, lastnost: 'Barva', vrednost: 'Črna' },
+//       { id_lastnost: 2, lastnost: 'Velikost', vrednost: '42mm' },
+//     ],
+//     lastnostiDodaj: [],
+//     lastnostiBrisi: [],
+//   },
+// ];
 
 @Component({
   selector: 'app-product-list',
@@ -85,8 +85,8 @@ export class ProductListComponent implements OnInit {
   private skladisceService = inject(SkladisceRESTService);
   private router = inject(Router);
 
-  products = signal<IzdelekDTO[]>(mockIzdelki);
-  filteredProducts = signal<IzdelekDTO[]>(mockIzdelki);
+  products = signal<IzdelekDTO[]>([]);
+  filteredProducts = signal<IzdelekDTO[]>([]);
   loading = signal(true);
 
   searchTerm = '';

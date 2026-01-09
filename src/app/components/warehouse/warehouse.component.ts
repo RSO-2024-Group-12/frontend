@@ -28,78 +28,78 @@ interface ProductWithStock {
   stock: ZalogaDTO | null;
 }
 
-const mockProductsWithStock: ProductWithStock[] = [
-  {
-    product: {
-      id_izdelek: 1,
-      naziv: 'Brezžične slušalke Pro',
-      opis: 'Aktivno odpravljanje šumov in dolga avtonomija baterije.',
-      cena: 129.99,
-      aktiven: true,
-      datum_dodajanja: '2024-02-10T09:00:00Z',
-      datum_spremembe: '2024-05-18T16:20:00Z',
-      zaloga: 40,
-      slike: [
-        {
-          id_slika: 1,
-          url: 'https://example.com/slusalke-front.jpg',
-        },
-      ],
-      lastnosti: [
-        {
-          id_lastnost: 1,
-          lastnost: 'Barva',
-          vrednost: 'Bela',
-        },
-        {
-          id_lastnost: 2,
-          lastnost: 'Baterija',
-          vrednost: '30h',
-        },
-      ],
-    },
-    stock: {
-      id_product: 1,
-      stock: 40,
-      reserved: 5,
-    },
-  },
-  {
-    product: {
-      id_izdelek: 2,
-      naziv: 'Mehanska tipkovnica RGB',
-      opis: 'Tipkovnica z mehanskimi stikali in RGB osvetlitvijo.',
-      cena: 99.5,
-      aktiven: true,
-      datum_dodajanja: '2024-03-01T11:30:00Z',
-      datum_spremembe: '2024-06-02T10:10:00Z',
-      zaloga: 15,
-      slike: [
-        {
-          id_slika: 2,
-          url: 'https://example.com/tipkovnica.jpg',
-        },
-      ],
-      lastnosti: [
-        {
-          id_lastnost: 3,
-          lastnost: 'Stikala',
-          vrednost: 'Red',
-        },
-        {
-          id_lastnost: 4,
-          lastnost: 'Layout',
-          vrednost: 'US',
-        },
-      ],
-    },
-    stock: {
-      id_product: 2,
-      stock: 15,
-      reserved: 2,
-    },
-  },
-];
+// const mockProductsWithStock: ProductWithStock[] = [
+//   {
+//     product: {
+//       id_izdelek: 1,
+//       naziv: 'Brezžične slušalke Pro',
+//       opis: 'Aktivno odpravljanje šumov in dolga avtonomija baterije.',
+//       cena: 129.99,
+//       aktiven: true,
+//       datum_dodajanja: '2024-02-10T09:00:00Z',
+//       datum_spremembe: '2024-05-18T16:20:00Z',
+//       zaloga: 40,
+//       slike: [
+//         {
+//           id_slika: 1,
+//           url: 'https://example.com/slusalke-front.jpg',
+//         },
+//       ],
+//       lastnosti: [
+//         {
+//           id_lastnost: 1,
+//           lastnost: 'Barva',
+//           vrednost: 'Bela',
+//         },
+//         {
+//           id_lastnost: 2,
+//           lastnost: 'Baterija',
+//           vrednost: '30h',
+//         },
+//       ],
+//     },
+//     stock: {
+//       id_product: 1,
+//       stock: 40,
+//       reserved: 5,
+//     },
+//   },
+//   {
+//     product: {
+//       id_izdelek: 2,
+//       naziv: 'Mehanska tipkovnica RGB',
+//       opis: 'Tipkovnica z mehanskimi stikali in RGB osvetlitvijo.',
+//       cena: 99.5,
+//       aktiven: true,
+//       datum_dodajanja: '2024-03-01T11:30:00Z',
+//       datum_spremembe: '2024-06-02T10:10:00Z',
+//       zaloga: 15,
+//       slike: [
+//         {
+//           id_slika: 2,
+//           url: 'https://example.com/tipkovnica.jpg',
+//         },
+//       ],
+//       lastnosti: [
+//         {
+//           id_lastnost: 3,
+//           lastnost: 'Stikala',
+//           vrednost: 'Red',
+//         },
+//         {
+//           id_lastnost: 4,
+//           lastnost: 'Layout',
+//           vrednost: 'US',
+//         },
+//       ],
+//     },
+//     stock: {
+//       id_product: 2,
+//       stock: 15,
+//       reserved: 2,
+//     },
+//   },
+// ];
 
 @Component({
   selector: 'app-warehouse',
@@ -131,8 +131,8 @@ export class WarehouseComponent implements OnInit {
   private skladisceService = inject(SkladisceRESTService);
   private messageService = inject(MessageService);
 
-  productsWithStock = signal<ProductWithStock[]>(mockProductsWithStock);
-  filteredProductsWithStock = signal<ProductWithStock[]>(mockProductsWithStock);
+  productsWithStock = signal<ProductWithStock[]>([]);
+  filteredProductsWithStock = signal<ProductWithStock[]>([]);
   loading = signal(true);
   searchTerm = signal('');
   showAddDialog = signal(false);
@@ -170,6 +170,13 @@ export class WarehouseComponent implements OnInit {
   }
 
   loadStockInfo(products: IzdelekDTO[]) {
+    if (!products || products.length === 0) {
+      this.productsWithStock.set([]);
+      this.filteredProductsWithStock.set([]);
+      this.loading.set(false);
+      return;
+    }
+
     const stockRequests = products.map((product) =>
       this.skladisceService.v1SkladisceZalogaIdGet(product.id_izdelek!),
     );
