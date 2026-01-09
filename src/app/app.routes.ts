@@ -7,7 +7,6 @@ import { OrderDetailComponent } from './components/order-detail/order-detail.com
 import { WarehouseComponent } from './components/warehouse/warehouse.component';
 import { CheckoutComponent } from './components/checkout/checkout.component';
 import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
-import { keycloakFunctionalGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/products', pathMatch: 'full' },
@@ -18,6 +17,10 @@ export const routes: Routes = [
   { path: 'payment-success', component: PaymentSuccessComponent },
   { path: 'orders', component: OrdersComponent },
   { path: 'orders/:id', component: OrderDetailComponent },
-  { path: 'warehouse', component: WarehouseComponent, canActivate: [keycloakFunctionalGuard] },
+  // TODO: Uncomment when we have Keycloak
+  {
+    path: 'warehouse',
+    component: WarehouseComponent /*, canActivate: [keycloakFunctionalGuard] */,
+  },
   { path: '**', redirectTo: '/products' },
 ];
