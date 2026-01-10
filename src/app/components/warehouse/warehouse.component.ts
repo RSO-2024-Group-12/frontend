@@ -22,6 +22,7 @@ import { FormsModule } from '@angular/forms';
 import { Dialog } from 'primeng/dialog';
 import { Textarea } from 'primeng/textarea';
 import { Checkbox } from 'primeng/checkbox';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ProductWithStock {
   product: IzdelekDTO;
@@ -226,7 +227,7 @@ export class WarehouseComponent implements OnInit {
     if (!productId) return;
 
     const requestDto: RequestDTO = {
-      id_request: crypto.randomUUID(),
+      id_request: uuidv4(),
       type: 'STOCK_ADDED',
       id_product: productId,
       id_user: this.userId,
@@ -261,7 +262,7 @@ export class WarehouseComponent implements OnInit {
     if (!productId) return;
 
     const requestDto: RequestDTO = {
-      id_request: crypto.randomUUID(),
+      id_request: uuidv4(),
       type: 'STOCK_REMOVED',
       id_product: productId,
       id_user: this.userId,
