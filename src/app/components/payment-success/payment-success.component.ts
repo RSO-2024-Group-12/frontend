@@ -19,6 +19,10 @@ export class PaymentSuccessComponent implements OnInit {
       id_seller: 1,
       currency: 'EUR',
 
+      recipient: 'Test Name',
+      recipient_email: 'test@test.com',
+      store: 'Test store',
+
       id_order: token!,
       redirect_url: window.location.href,
       amount: 0, // backend recalculates from PayPal

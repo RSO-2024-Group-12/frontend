@@ -110,6 +110,10 @@ export class CheckoutComponent implements OnInit {
       return_url: `${window.location.origin}/payment-success`,
       cancel_url: `${window.location.origin}/cart`,
 
+      recipient: 'Test Name',
+      recipient_email: 'test@test.com',
+      store: 'Test store',
+
       street: this.address.street,
       house_number: this.address.house_number,
       city: this.address.city,
